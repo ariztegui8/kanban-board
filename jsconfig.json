@@ -1,13 +1,11 @@
-  {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "allowSyntheticDefaultImports": true,
-      "baseUrl": ".",
-      "paths": {
-        "@/*": ["./*"]
-      }
-    },
-    "include": ["next-env.d.ts", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
-    "exclude": ["node_modules"]
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/lib/*": ["lib/*"],
+      "@/pages/*": ["pages/*"],
+      "@/styles/*": ["styles/*"]
+    }
   }
+}
