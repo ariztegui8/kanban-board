@@ -60,7 +60,7 @@
 }
 
 .fondo {
-  background-image: url('../assets/fondo.svg');
+  background-image: url('/fondo.svg');
   width: 100%;
   height: auto;
 }
