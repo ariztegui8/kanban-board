@@ -21,7 +21,7 @@ const MenuSearch = () => {
       ];
 
   return (
-    <div className="flex items-center justify-between py-4 px-4 shadow-md ">
+    <div className="flex flex-col items-start gap-2 justify-between py-4 px-4 shadow-md lg:flex-row lg:items-center">
         <div className="flex gap-1">
             {avatars.map(avatar => (
                  <Avatar key={avatar.id}>
@@ -31,11 +31,11 @@ const MenuSearch = () => {
             ))}
         </div>
 
-        <div>
+        <div className="hidden md:flex">
             <MenuNavegation />
         </div>
 
-        <div>
+        <div className="md:hidden lg:hidden xl:flex">
             <Search />
         </div>
     </div>

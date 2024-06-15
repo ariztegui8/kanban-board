@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -23,6 +23,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/
 import MenuSearch from '@/components/MenuSearch';
 import ColumnIcons from '@/components/ColumnIcons';
 import CreateBoard from '@/components/CreateBoard';
+import { Textarea } from "@/components/ui/textarea"
+
 
 export default function Home() {
   const [containers, setContainers] = useState([
@@ -36,6 +38,8 @@ export default function Home() {
   const [itemDescription, setItemDescription] = useState('');
   const [showAddItemDialog, setShowAddItemDialog] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingItemId, setEditingItemId] = useState(null);
 
   useEffect(() => {
     setMounted(true);
@@ -45,29 +49,57 @@ export default function Home() {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   if (!mounted) {
     return null;
   }
 
-  const onAddItem = () => {
+  const onAddOrEditItem = () => {
     if (!itemName || !itemDescription) return;
-    const id = `item-${uuidv4()}`;
-    const updatedContainers = containers.map((container) => {
-      if (container.id === currentContainerId) {
-        return {
-          ...container,
-          items: [...container.items, { id, title: itemName, description: itemDescription }],
-        };
-      }
-      return container;
-    });
-    setContainers(updatedContainers);
+
+    if (isEditing) {
+      const updatedContainers = containers.map((container) => {
+        if (container.items.some((item) => item.id === editingItemId)) {
+          return {
+            ...container,
+            items: container.items.map((item) =>
+              item.id === editingItemId ? { ...item, title: itemName, description: itemDescription } : item
+            ),
+          };
+        }
+        return container;
+      });
+      setContainers(updatedContainers);
+    } else {
+
+      const id = `item-${uuidv4()}`;
+      const updatedContainers = containers.map((container) => {
+        if (container.id === currentContainerId) {
+          return {
+            ...container,
+            items: [...container.items, { id, title: itemName, description: itemDescription }],
+          };
+        }
+        return container;
+      });
+      setContainers(updatedContainers);
+    }
+
     setItemName('');
     setItemDescription('');
     setShowAddItemDialog(false);
+    setIsEditing(false);
+    setEditingItemId(null);
+  };
+
+  const onEditItem = (id, title, description) => {
+    setEditingItemId(id);
+    setItemName(title);
+    setItemDescription(description);
+    setIsEditing(true);
+    setShowAddItemDialog(true);
   };
 
   function findValueOfItems(id, type) {
@@ -76,7 +108,7 @@ export default function Home() {
     }
     if (type === 'item') {
       return containers.find((container) =>
-        container.items.find((item) => item.id === id),
+        container.items.find((item) => item.id === id)
       );
     }
   }
@@ -131,24 +163,24 @@ export default function Home() {
       if (!activeContainer || !overContainer) return;
 
       const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id,
+        (container) => container.id === activeContainer.id
       );
       const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
+        (container) => container.id === overContainer.id
       );
 
       const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id,
+        (item) => item.id === active.id
       );
       const overitemIndex = overContainer.items.findIndex(
-        (item) => item.id === over.id,
+        (item) => item.id === over.id
       );
       if (activeContainerIndex === overContainerIndex) {
         let newItems = [...containers];
         newItems[activeContainerIndex].items = arrayMove(
           newItems[activeContainerIndex].items,
           activeitemIndex,
-          overitemIndex,
+          overitemIndex
         );
 
         setContainers(newItems);
@@ -156,12 +188,12 @@ export default function Home() {
         let newItems = [...containers];
         const [removeditem] = newItems[activeContainerIndex].items.splice(
           activeitemIndex,
-          1,
+          1
         );
         newItems[overContainerIndex].items.splice(
           overitemIndex,
           0,
-          removeditem,
+          removeditem
         );
         setContainers(newItems);
       }
@@ -180,20 +212,20 @@ export default function Home() {
       if (!activeContainer || !overContainer) return;
 
       const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id,
+        (container) => container.id === activeContainer.id
       );
       const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
+        (container) => container.id === overContainer.id
       );
 
       const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id,
+        (item) => item.id === active.id
       );
 
       let newItems = [...containers];
       const [removeditem] = newItems[activeContainerIndex].items.splice(
         activeitemIndex,
-        1,
+        1
       );
       newItems[overContainerIndex].items.push(removeditem);
       setContainers(newItems);
@@ -211,10 +243,10 @@ export default function Home() {
       active.id !== over.id
     ) {
       const activeContainerIndex = containers.findIndex(
-        (container) => container.id === active.id,
+        (container) => container.id === active.id
       );
       const overContainerIndex = containers.findIndex(
-        (container) => container.id === over.id,
+        (container) => container.id === over.id
       );
       let newItems = [...containers];
       newItems = arrayMove(newItems, activeContainerIndex, overContainerIndex);
@@ -233,16 +265,16 @@ export default function Home() {
 
       if (!activeContainer || !overContainer) return;
       const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id,
+        (container) => container.id === activeContainer.id
       );
       const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
+        (container) => container.id === overContainer.id
       );
       const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id,
+        (item) => item.id === active.id
       );
       const overitemIndex = overContainer.items.findIndex(
-        (item) => item.id === over.id,
+        (item) => item.id === over.id
       );
 
       if (activeContainerIndex === overContainerIndex) {
@@ -250,19 +282,19 @@ export default function Home() {
         newItems[activeContainerIndex].items = arrayMove(
           newItems[activeContainerIndex].items,
           activeitemIndex,
-          overitemIndex,
+          overitemIndex
         );
         setContainers(newItems);
       } else {
         let newItems = [...containers];
         const [removeditem] = newItems[activeContainerIndex].items.splice(
           activeitemIndex,
-          1,
+          1
         );
         newItems[overContainerIndex].items.splice(
           overitemIndex,
           0,
-          removeditem,
+          removeditem
         );
         setContainers(newItems);
       }
@@ -280,19 +312,19 @@ export default function Home() {
 
       if (!activeContainer || !overContainer) return;
       const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id,
+        (container) => container.id === activeContainer.id
       );
       const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
+        (container) => container.id === overContainer.id
       );
       const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id,
+        (item) => item.id === active.id
       );
 
       let newItems = [...containers];
       const [removeditem] = newItems[activeContainerIndex].items.splice(
         activeitemIndex,
-        1,
+        1
       );
       newItems[overContainerIndex].items.push(removeditem);
       setContainers(newItems);
@@ -306,24 +338,28 @@ export default function Home() {
       <Dialog open={showAddItemDialog} onOpenChange={setShowAddItemDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Item</DialogTitle>
+            <DialogTitle className="text-[#0F172A]">{isEditing ? 'Editando tarea' : 'Creando una tarea'}</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col w-full items-start gap-y-4">
+          <div className="flex flex-col w-full items-end gap-y-4">
             <Input
               type="text"
-              placeholder="Item Title"
+              placeholder="Titulo de la tarea"
               name="itemname"
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
-            <Input
-              type="text"
-              placeholder="Item Description"
+
+            <Textarea
+              placeholder="Descripción de la tarea"
               name="itemdescription"
               value={itemDescription}
               onChange={(e) => setItemDescription(e.target.value)}
+              className="mb-4"
             />
-            <Button onClick={onAddItem}>Agregar tarea</Button>
+
+            <Button onClick={onAddOrEditItem} variant="custom" className='gap-2'>
+              {isEditing ? 'Guardar cambios' : 'Agregar'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -332,7 +368,7 @@ export default function Home() {
         <ColumnIcons />
         <div className='p-4 w-full'>
           <CreateBoard />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 ">
+          <div className="flex flex-col gap-6 md:flex-row">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCorners}
@@ -349,12 +385,19 @@ export default function Home() {
                     onAddItem={() => {
                       setShowAddItemDialog(true);
                       setCurrentContainerId(container.id);
+                      setIsEditing(false);
                     }}
                   >
                     <SortableContext items={container.items.map((i) => i.id)}>
-                      <div className="flex items-start flex-col gap-y-4">
+                      <div className="flex items-start flex-col gap-4">
                         {container.items.map((i) => (
-                          <Items title={i.title} description={i.description} id={i.id} key={i.id} />
+                          <Items
+                            title={i.title}
+                            description={i.description}
+                            id={i.id}
+                            key={i.id}
+                            onEdit={onEditItem}
+                          />
                         ))}
                       </div>
                     </SortableContext>

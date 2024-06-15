@@ -19,19 +19,21 @@ const Navbar = () => {
           {/* <p className='text-white font-bold text-2xl'>vambe</p> */}
         </div>
         <div className='flex gap-4 items-center'>
-          <div>
+          <div className='hidden sm:flex'>
             <MdOutlineEmail
               size={24}
               color='#fff'
+              className='cursor-pointer'
             />
           </div>
-          <div>
+          <div className='hidden sm:flex'>
             <IoNotificationsOutline 
               size={24}
               color='#fff'
+              className='cursor-pointer'
             />
           </div>
-          <div>
+          <div className='hidden sm:flex'>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>CN</AvatarFallback>

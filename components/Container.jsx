@@ -1,9 +1,8 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Button } from './ui/button';
 import { HiPlus } from "react-icons/hi";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ListChecks } from 'lucide-react';
 
 const Container = ({ id, children, title, description, onAddItem }) => {
@@ -20,6 +19,7 @@ const Container = ({ id, children, title, description, onAddItem }) => {
       type: 'container',
     },
   });
+
   return (
     <div
       {...attributes}
@@ -28,9 +28,9 @@ const Container = ({ id, children, title, description, onAddItem }) => {
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`w-full h-full flex flex-col  ${isDragging ? 'opacity-50' : ''}`}
+      className={`w-full h-full flex flex-col cursor-default md:max-w-72 ${isDragging ? 'opacity-50' : ''}`}
     >
-      <div className="flex items-center justify-between mb-4" >
+      <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col w-full">
           <div className='bg-[#9AD09E] flex justify-between gap-2 items-center p-2 '>
             <div className='w-max'>
@@ -43,18 +43,16 @@ const Container = ({ id, children, title, description, onAddItem }) => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div>
-                    <HiPlus
-                      size={22}
-                      color='#fff'
-                    />
+                    <HiPlus size={22} color='#fff' className='cursor-pointer' />
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-40">
-
                   <DropdownMenuGroup>
                     <DropdownMenuItem onClick={onAddItem}>
                       <span>Crear tarea</span>
-                      <DropdownMenuShortcut> <ListChecks className="mr-2 h-4 w-4" /></DropdownMenuShortcut>
+                      <DropdownMenuShortcut>
+                        <ListChecks className="mr-2 h-4 w-4" />
+                      </DropdownMenuShortcut>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -65,7 +63,9 @@ const Container = ({ id, children, title, description, onAddItem }) => {
         </div>
       </div>
 
-      {children}
+      <div className="">
+        {children}
+      </div>
     </div>
   );
 };

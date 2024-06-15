@@ -12,7 +12,6 @@ const Search = () => {
             <Input 
                 type='text'
                 placeholder='Buscar...'
-                // className='w-96'
             />
         </div>
     )

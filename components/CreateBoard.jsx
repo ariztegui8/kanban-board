@@ -15,8 +15,8 @@ import { ListChecks, Table2 } from 'lucide-react';
 
 const CreateBoard = () => {
     return (
-        <div className='flex flex-col items-center justify-between gap-2 mb-5'>
-            <div>
+        <div className='flex flex-col items-start justify-between gap-4 mb-10 md:flex-row md:items-center md:mb-5'>
+            <div className='hidden md:flex'>
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
