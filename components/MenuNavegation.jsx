@@ -35,15 +35,33 @@ const MenuNavegation = () => {
 
                     <NavigationMenuItem>
                         <NavigationMenuTrigger>Cronograma</NavigationMenuTrigger>
-                        <NavigationMenuContent className="bg-white p-4 w-full shadow-lg rounded-md">
-                            <NavigationMenuLink>Link</NavigationMenuLink>
+                        <NavigationMenuContent className="bg-white p-4 w-72 shadow-lg rounded-md">
+                            <ul className='w-60'>
+                                <li className='mb-1 text-sm text-[#0F172A]'>
+                                    <NavigationMenuLink>Cronograma 1</NavigationMenuLink>
+                                </li>
+                                <li className='text-sm text-[#0F172A]'>
+                                    <NavigationMenuLink>Cronograma 2</NavigationMenuLink>
+                                </li>
+                            </ul>
+
                         </NavigationMenuContent>
                     </NavigationMenuItem>
 
                     <NavigationMenuItem>
                         <NavigationMenuTrigger>Listas</NavigationMenuTrigger>
-                        <NavigationMenuContent>
-                            <NavigationMenuLink>Link</NavigationMenuLink>
+                        <NavigationMenuContent className="bg-white p-4 shadow-lg rounded-md">
+                            <ul className='w-60'>
+                                <li className='mb-1 text-sm text-[#0F172A]'>
+                                    <NavigationMenuLink>Lista 1</NavigationMenuLink>
+                                </li>
+                                <li className='mb-1 text-sm text-[#0F172A]'>
+                                    <NavigationMenuLink>Lista 2</NavigationMenuLink>
+                                </li>
+                                <li className='text-sm text-[#0F172A]'>
+                                    <NavigationMenuLink>Lista 3</NavigationMenuLink>
+                                </li>
+                            </ul>
                         </NavigationMenuContent>
                     </NavigationMenuItem>
 
