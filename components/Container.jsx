@@ -1,7 +1,10 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
+import { HiPlus } from "react-icons/hi";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { ListChecks } from 'lucide-react';
 
 const Container = ({ id, children, title, description, onAddItem }) => {
   const {
@@ -25,19 +28,44 @@ const Container = ({ id, children, title, description, onAddItem }) => {
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`w-full h-full p-4 bg-gray-50 rounded-xl flex flex-col gap-y-4 ${isDragging ? 'opacity-50' : ''}`}
+      className={`w-full h-full flex flex-col  ${isDragging ? 'opacity-50' : ''}`}
     >
-      <div className="flex items-center justify-between" {...listeners}>
-        <div className="flex flex-col gap-y-1">
-          <h1 className="text-gray-800 text-xl">{title}</h1>
+      <div className="flex items-center justify-between mb-4" >
+        <div className="flex flex-col w-full">
+          <div className='bg-[#9AD09E] flex justify-between gap-2 items-center p-2 '>
+            <div className='w-max'>
+              <h1 className="text-white font-bold">{title}</h1>
+            </div>
+            <div {...listeners} className='flex-grow cursor-move'>
+              <p className='text-[#9AD09E]'>Move</p>
+            </div>
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div>
+                    <HiPlus
+                      size={22}
+                      color='#fff'
+                    />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40">
+
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={onAddItem}>
+                      <span>Crear tarea</span>
+                      <DropdownMenuShortcut> <ListChecks className="mr-2 h-4 w-4" /></DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
           <p className="text-gray-400 text-sm">{description}</p>
         </div>
       </div>
 
       {children}
-      <Button variant="ghost" onClick={onAddItem}>
-        Add Item
-      </Button>
     </div>
   );
 };

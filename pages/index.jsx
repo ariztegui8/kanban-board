@@ -1,14 +1,11 @@
+'use client'
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   DndContext,
-  DragEndEvent,
-  DragMoveEvent,
   DragOverlay,
-  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
-  UniqueIdentifier,
   closestCorners,
   useSensor,
   useSensors,
@@ -18,39 +15,58 @@ import {
   arrayMove,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import Container from '@/components/Container';
-import Items from '@/components/Items';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import Container from '../components/Container';
+import Items from '../components/Items';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import MenuSearch from '@/components/MenuSearch';
+import ColumnIcons from '@/components/ColumnIcons';
+import CreateBoard from '@/components/CreateBoard';
 
 export default function Home() {
-  const [containers, setContainers] = useState([]);
+  const [containers, setContainers] = useState([
+    { id: `container-1`, title: 'To Do', items: [] },
+    { id: `container-2`, title: 'In Progress', items: [] },
+    { id: `container-3`, title: 'Done', items: [] },
+  ]);
   const [activeId, setActiveId] = useState(null);
   const [currentContainerId, setCurrentContainerId] = useState();
   const [itemName, setItemName] = useState('');
+  const [itemDescription, setItemDescription] = useState('');
   const [showAddItemDialog, setShowAddItemDialog] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Inicializar con tres columnas fijas
-    setContainers([
-      { id: `container-1`, title: 'To Do', items: [] },
-      { id: `container-2`, title: 'In Progress', items: [] },
-      { id: `container-3`, title: 'Done', items: [] },
-    ]);
+    setMounted(true);
   }, []);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  if (!mounted) {
+    return null;
+  }
+
   const onAddItem = () => {
-    if (!itemName) return;
+    if (!itemName || !itemDescription) return;
     const id = `item-${uuidv4()}`;
-    const container = containers.find((item) => item.id === currentContainerId);
-    if (!container) return;
-    container.items.push({
-      id,
-      title: itemName,
+    const updatedContainers = containers.map((container) => {
+      if (container.id === currentContainerId) {
+        return {
+          ...container,
+          items: [...container.items, { id, title: itemName, description: itemDescription }],
+        };
+      }
+      return container;
     });
-    setContainers([...containers]);
+    setContainers(updatedContainers);
     setItemName('');
+    setItemDescription('');
     setShowAddItemDialog(false);
   };
 
@@ -73,6 +89,14 @@ export default function Home() {
     return item.title;
   };
 
+  const findItemDescription = (id) => {
+    const container = findValueOfItems(id, 'item');
+    if (!container) return '';
+    const item = container.items.find((item) => item.id === id);
+    if (!item) return '';
+    return item.description;
+  };
+
   const findContainerTitle = (id) => {
     const container = findValueOfItems(id, 'container');
     if (!container) return '';
@@ -84,13 +108,6 @@ export default function Home() {
     if (!container) return [];
     return container.items;
   };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
 
   function handleDragStart(event) {
     const { active } = event;
@@ -284,7 +301,8 @@ export default function Home() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl py-10">
+    <div className="mx-auto ">
+      <MenuSearch />
       <Dialog open={showAddItemDialog} onOpenChange={setShowAddItemDialog}>
         <DialogContent>
           <DialogHeader>
@@ -298,56 +316,65 @@ export default function Home() {
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
-            <Button onClick={onAddItem}>Add Item</Button>
+            <Input
+              type="text"
+              placeholder="Item Description"
+              name="itemdescription"
+              value={itemDescription}
+              onChange={(e) => setItemDescription(e.target.value)}
+            />
+            <Button onClick={onAddItem}>Agregar tarea</Button>
           </div>
         </DialogContent>
       </Dialog>
-      <div className="flex items-center justify-between gap-y-2">
-        <h1 className="text-gray-800 text-3xl font-bold">Board Kanban</h1>
-      </div>
-      <div className="mt-10">
-        <div className="grid grid-cols-3 gap-6">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragMove={handleDragMove}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={containers.map((i) => i.id)}>
-              {containers.map((container) => (
-                <Container
-                  id={container.id}
-                  title={container.title}
-                  key={container.id}
-                  onAddItem={() => {
-                    setShowAddItemDialog(true);
-                    setCurrentContainerId(container.id);
-                  }}
-                >
-                  <SortableContext items={container.items.map((i) => i.id)}>
-                    <div className="flex items-start flex-col gap-y-4">
-                      {container.items.map((i) => (
-                        <Items title={i.title} id={i.id} key={i.id} />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </Container>
-              ))}
-            </SortableContext>
-            <DragOverlay adjustScale={false}>
-              {activeId && activeId.toString().includes('item') && (
-                <Items id={activeId} title={findItemTitle(activeId)} />
-              )}
-              {activeId && activeId.toString().includes('container') && (
-                <Container id={activeId} title={findContainerTitle(activeId)}>
-                  {findContainerItems(activeId).map((i) => (
-                    <Items key={i.id} title={i.title} id={i.id} />
-                  ))}
-                </Container>
-              )}
-            </DragOverlay>
-          </DndContext>
+
+      <div className="flex ">
+        <ColumnIcons />
+        <div className='p-4 w-full'>
+          <CreateBoard />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 ">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragMove={handleDragMove}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={containers.map((i) => i.id)}>
+                {containers.map((container) => (
+                  <Container
+                    id={container.id}
+                    title={container.title}
+                    key={container.id}
+                    onAddItem={() => {
+                      setShowAddItemDialog(true);
+                      setCurrentContainerId(container.id);
+                    }}
+                  >
+                    <SortableContext items={container.items.map((i) => i.id)}>
+                      <div className="flex items-start flex-col gap-y-4">
+                        {container.items.map((i) => (
+                          <Items title={i.title} description={i.description} id={i.id} key={i.id} />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </Container>
+                ))}
+              </SortableContext>
+              <DragOverlay adjustScale={false}>
+                {activeId && activeId.toString().includes('item') && (
+                  <Items id={activeId} title={findItemTitle(activeId)} description={findItemDescription(activeId)} />
+                )}
+                {activeId && activeId.toString().includes('container') && (
+                  <Container id={activeId} title={findContainerTitle(activeId)}>
+                    {findContainerItems(activeId).map((i) => (
+                      <Items key={i.id} title={i.title} description={i.description} id={i.id} />
+                    ))}
+                  </Container>
+                )}
+              </DragOverlay>
+            </DndContext>
+          </div>
         </div>
       </div>
     </div>
