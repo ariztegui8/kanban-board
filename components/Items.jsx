@@ -8,8 +8,9 @@ import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowDownNarrowWide, ArrowUpNarrowWide, Pencil, Trash2 } from 'lucide-react';
 import avatar1 from '../assets/avatar1.png';
+import { formatearFecha } from '@/helpers/formatearFecha';
 
-const Items = ({ id, title, description, onEdit }) => {
+const Items = ({ id, title, description, onEdit, numero, priority, date }) => {
   const {
     attributes,
     listeners,
@@ -38,7 +39,7 @@ const Items = ({ id, title, description, onEdit }) => {
       <div className="">
         <div className='flex items-center justify-between gap-2 mb-3'>
           <div>
-            <p className='text-[#6B959E] text-xs'># tarea</p>
+            <p className='text-[#6B959E] text-xs'># tarea {numero}</p>
           </div>
           <div {...listeners} className='flex-grow cursor-move'>
             <p className='text-white'>Move</p>
@@ -82,8 +83,8 @@ const Items = ({ id, title, description, onEdit }) => {
           </div>
         </div>
 
-        <div className='flex gap-4 mb-4'>
-          <div className='w-12 h-12 flex-shrink-0'>
+        <div {...listeners} className='flex gap-4 mb-4 cursor-move'>
+          <div className='w-11 h-11 flex-shrink-0'>
             <img className='w-full h-full rounded-xl' src={avatar1.src} alt="Tarea" />
           </div>
           <div className=''>
@@ -95,7 +96,7 @@ const Items = ({ id, title, description, onEdit }) => {
         <div className='flex justify-between gap-2'>
           <div className='flex gap-2'>
             <div className='flex '>
-              <VscPinned size={18} color='#5EBDB2' />
+              <VscPinned size={18} color='#5EBDB2' className='cursor-pointer'/>
               <p className='text-xs text-[#0F172A]'>Fijar</p>
             </div>
 
@@ -103,12 +104,12 @@ const Items = ({ id, title, description, onEdit }) => {
 
             <div className='flex '>
               <HiOutlineBolt size={18} color='#5EBDB2' />
-              <p className='text-xs text-[#0F172A]'>Baja</p>
+              <p className='text-xs text-[#0F172A]'>{priority}</p>
             </div>
           </div>
 
           <div>
-            <p className='text-[11px] text-[#C7C7C7]'>01 Julio 2024</p>
+            <p className='text-[11px] text-[#C7C7C7]'>{formatearFecha(date)}</p>
           </div>
         </div>
       </div>

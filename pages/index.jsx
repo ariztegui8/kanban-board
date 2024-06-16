@@ -17,14 +17,11 @@ import {
 } from '@dnd-kit/sortable';
 import Container from '../components/Container';
 import Items from '../components/Items';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+
 import MenuSearch from '@/components/MenuSearch';
 import ColumnIcons from '@/components/ColumnIcons';
 import CreateBoard from '@/components/CreateBoard';
-import { Textarea } from "@/components/ui/textarea"
-
+import Modal from '@/components/Modal';
 
 export default function Home() {
   const [containers, setContainers] = useState([
@@ -34,8 +31,12 @@ export default function Home() {
   ]);
   const [activeId, setActiveId] = useState(null);
   const [currentContainerId, setCurrentContainerId] = useState();
-  const [itemName, setItemName] = useState('');
-  const [itemDescription, setItemDescription] = useState('');
+  const [itemData, setItemData] = useState({
+    name: '',
+    description: '',
+    priority: '',
+  });
+  const [error, setError] = useState(false);
   const [showAddItemDialog, setShowAddItemDialog] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -57,7 +58,13 @@ export default function Home() {
   }
 
   const onAddOrEditItem = () => {
-    if (!itemName || !itemDescription) return;
+    const { name, description, priority } = itemData;
+    if (!name || !description || !priority) {
+      setError(true);
+      return;
+    }
+
+    const date = new Date().toISOString();
 
     if (isEditing) {
       const updatedContainers = containers.map((container) => {
@@ -65,7 +72,9 @@ export default function Home() {
           return {
             ...container,
             items: container.items.map((item) =>
-              item.id === editingItemId ? { ...item, title: itemName, description: itemDescription } : item
+              item.id === editingItemId
+                ? { ...item, title: name, description, priority, date }
+                : item
             ),
           };
         }
@@ -73,13 +82,12 @@ export default function Home() {
       });
       setContainers(updatedContainers);
     } else {
-
       const id = `item-${uuidv4()}`;
       const updatedContainers = containers.map((container) => {
         if (container.id === currentContainerId) {
           return {
             ...container,
-            items: [...container.items, { id, title: itemName, description: itemDescription }],
+            items: [...container.items, { id, title: name, description, priority, date }],
           };
         }
         return container;
@@ -87,19 +95,31 @@ export default function Home() {
       setContainers(updatedContainers);
     }
 
-    setItemName('');
-    setItemDescription('');
+    setError(false);
+    setItemData({
+      name: '',
+      description: '',
+      priority: ''
+    });
     setShowAddItemDialog(false);
     setIsEditing(false);
     setEditingItemId(null);
   };
 
-  const onEditItem = (id, title, description) => {
+  const onEditItem = (id, title, description, priority, date) => {
     setEditingItemId(id);
-    setItemName(title);
-    setItemDescription(description);
+    setItemData({ name: title, description, priority });
     setIsEditing(true);
     setShowAddItemDialog(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setItemData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handlePriorityChange = (value) => {
+    setItemData((prevData) => ({ ...prevData, priority: value }));
   };
 
   function findValueOfItems(id, type) {
@@ -127,6 +147,29 @@ export default function Home() {
     const item = container.items.find((item) => item.id === id);
     if (!item) return '';
     return item.description;
+  };
+
+  const findItemPriority = (id) => {
+    const container = findValueOfItems(id, 'item');
+    if (!container) return '';
+    const item = container.items.find((item) => item.id === id);
+    if (!item) return '';
+    return item.priority;
+  };
+
+  const findItemDate = (id) => {
+    const container = findValueOfItems(id, 'item');
+    if (!container) return '';
+    const item = container.items.find((item) => item.id === id);
+    if (!item) return '';
+    return item.date;
+  };
+
+  const findItemNumero = (id) => {
+    const container = findValueOfItems(id, 'item');
+    if (!container) return 0;
+    const itemIndex = container.items.findIndex((item) => item.id === id);
+    return itemIndex + 1;
   };
 
   const findContainerTitle = (id) => {
@@ -335,34 +378,17 @@ export default function Home() {
   return (
     <div className="mx-auto ">
       <MenuSearch />
-      <Dialog open={showAddItemDialog} onOpenChange={setShowAddItemDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-[#0F172A]">{isEditing ? 'Editando tarea' : 'Creando una tarea'}</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col w-full items-end gap-y-4">
-            <Input
-              type="text"
-              placeholder="Titulo de la tarea"
-              name="itemname"
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-            />
 
-            <Textarea
-              placeholder="Descripción de la tarea"
-              name="itemdescription"
-              value={itemDescription}
-              onChange={(e) => setItemDescription(e.target.value)}
-              className="mb-4"
-            />
-
-            <Button onClick={onAddOrEditItem} variant="custom" className='gap-2'>
-              {isEditing ? 'Guardar cambios' : 'Agregar'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Modal 
+        showAddItemDialog={showAddItemDialog}
+        setShowAddItemDialog={setShowAddItemDialog}
+        isEditing={isEditing}
+        itemData={itemData}
+        handleInputChange={handleInputChange}
+        error={error}
+        handlePriorityChange={handlePriorityChange}
+        onAddOrEditItem={onAddOrEditItem}
+      />
 
       <div className="flex ">
         <ColumnIcons />
@@ -390,13 +416,16 @@ export default function Home() {
                   >
                     <SortableContext items={container.items.map((i) => i.id)}>
                       <div className="flex items-start flex-col gap-4">
-                        {container.items.map((i) => (
+                        {container.items.map((i, index) => (
                           <Items
                             title={i.title}
                             description={i.description}
+                            priority={i.priority}
                             id={i.id}
                             key={i.id}
                             onEdit={onEditItem}
+                            numero={index + 1}
+                            date={i.date}
                           />
                         ))}
                       </div>
@@ -406,12 +435,12 @@ export default function Home() {
               </SortableContext>
               <DragOverlay adjustScale={false}>
                 {activeId && activeId.toString().includes('item') && (
-                  <Items id={activeId} title={findItemTitle(activeId)} description={findItemDescription(activeId)} />
+                  <Items id={activeId} title={findItemTitle(activeId)} description={findItemDescription(activeId)} priority={findItemPriority(activeId)} date={findItemDate(activeId)} numero={findItemNumero(activeId)} />
                 )}
                 {activeId && activeId.toString().includes('container') && (
                   <Container id={activeId} title={findContainerTitle(activeId)}>
-                    {findContainerItems(activeId).map((i) => (
-                      <Items key={i.id} title={i.title} description={i.description} id={i.id} />
+                    {findContainerItems(activeId).map((i, index) => (
+                      <Items key={i.id} title={i.title} description={i.description} id={i.id} priority={i.priority} date={i.date} numero={index + 1} />
                     ))}
                   </Container>
                 )}

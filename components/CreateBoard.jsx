@@ -43,23 +43,10 @@ const CreateBoard = () => {
             </div>
 
             <div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="custom" className='gap-2'>
-                            <FiLayout color="#fff" size={22}/>
-                            Crear tablero
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-40">
-                       
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <span>Crear tabla</span>
-                                <DropdownMenuShortcut> <Table2 className="mr-2 h-4 w-4" /></DropdownMenuShortcut>
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <Button variant="custom" className='gap-2'>
+                    <FiLayout color="#fff" size={22} />
+                    Crear tablero
+                </Button>
             </div>
         </div>
     )
