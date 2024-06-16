@@ -83,11 +83,12 @@ export default function Home() {
       setContainers(updatedContainers);
     } else {
       const id = `item-${uuidv4()}`;
+      const numero = containers.reduce((acc, container) => acc + container.items.length, 0) + 1;
       const updatedContainers = containers.map((container) => {
         if (container.id === currentContainerId) {
           return {
             ...container,
-            items: [...container.items, { id, title: name, description, priority, date }],
+            items: [...container.items, { id, title: name, description, priority, date, numero }],
           };
         }
         return container;
@@ -106,7 +107,7 @@ export default function Home() {
     setEditingItemId(null);
   };
 
-  const onEditItem = (id, title, description, priority, date) => {
+  const onEditItem = (id, title, description, priority) => {
     setEditingItemId(id);
     setItemData({ name: title, description, priority });
     setIsEditing(true);
@@ -168,8 +169,9 @@ export default function Home() {
   const findItemNumero = (id) => {
     const container = findValueOfItems(id, 'item');
     if (!container) return 0;
-    const itemIndex = container.items.findIndex((item) => item.id === id);
-    return itemIndex + 1;
+    const item = container.items.find((item) => item.id === id);
+    if (!item) return 0;
+    return item.numero;
   };
 
   const findContainerTitle = (id) => {
@@ -212,31 +214,32 @@ export default function Home() {
         (container) => container.id === overContainer.id
       );
 
-      const activeitemIndex = activeContainer.items.findIndex(
+      const activeItemIndex = activeContainer.items.findIndex(
         (item) => item.id === active.id
       );
-      const overitemIndex = overContainer.items.findIndex(
+      const overItemIndex = overContainer.items.findIndex(
         (item) => item.id === over.id
       );
+
       if (activeContainerIndex === overContainerIndex) {
         let newItems = [...containers];
         newItems[activeContainerIndex].items = arrayMove(
           newItems[activeContainerIndex].items,
-          activeitemIndex,
-          overitemIndex
+          activeItemIndex,
+          overItemIndex
         );
 
         setContainers(newItems);
       } else {
         let newItems = [...containers];
-        const [removeditem] = newItems[activeContainerIndex].items.splice(
-          activeitemIndex,
+        const [removedItem] = newItems[activeContainerIndex].items.splice(
+          activeItemIndex,
           1
         );
         newItems[overContainerIndex].items.splice(
-          overitemIndex,
+          overItemIndex,
           0,
-          removeditem
+          removedItem
         );
         setContainers(newItems);
       }
@@ -261,16 +264,16 @@ export default function Home() {
         (container) => container.id === overContainer.id
       );
 
-      const activeitemIndex = activeContainer.items.findIndex(
+      const activeItemIndex = activeContainer.items.findIndex(
         (item) => item.id === active.id
       );
 
       let newItems = [...containers];
-      const [removeditem] = newItems[activeContainerIndex].items.splice(
-        activeitemIndex,
+      const [removedItem] = newItems[activeContainerIndex].items.splice(
+        activeItemIndex,
         1
       );
-      newItems[overContainerIndex].items.push(removeditem);
+      newItems[overContainerIndex].items.push(removedItem);
       setContainers(newItems);
     }
   };
@@ -278,12 +281,14 @@ export default function Home() {
   function handleDragEnd(event) {
     const { active, over } = event;
 
+    if (!active || !over || active.id === over.id) {
+      setActiveId(null);
+      return;
+    }
+
     if (
       active.id.toString().includes('container') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
+      over.id.toString().includes('container')
     ) {
       const activeContainerIndex = containers.findIndex(
         (container) => container.id === active.id
@@ -291,87 +296,43 @@ export default function Home() {
       const overContainerIndex = containers.findIndex(
         (container) => container.id === over.id
       );
-      let newItems = [...containers];
-      newItems = arrayMove(newItems, activeContainerIndex, overContainerIndex);
+      const newItems = arrayMove([...containers], activeContainerIndex, overContainerIndex);
       setContainers(newItems);
-    }
-
-    if (
+    } else if (
       active.id.toString().includes('item') &&
-      over?.id.toString().includes('item') &&
-      active &&
-      over &&
-      active.id !== over.id
+      (over.id.toString().includes('item') || over.id.toString().includes('container'))
     ) {
       const activeContainer = findValueOfItems(active.id, 'item');
-      const overContainer = findValueOfItems(over.id, 'item');
+      const overContainer = findValueOfItems(over.id, over.id.includes('container') ? 'container' : 'item');
 
-      if (!activeContainer || !overContainer) return;
-      const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id
-      );
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id
-      );
-      const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id
-      );
-      const overitemIndex = overContainer.items.findIndex(
-        (item) => item.id === over.id
-      );
-
-      if (activeContainerIndex === overContainerIndex) {
-        let newItems = [...containers];
-        newItems[activeContainerIndex].items = arrayMove(
-          newItems[activeContainerIndex].items,
-          activeitemIndex,
-          overitemIndex
-        );
-        setContainers(newItems);
-      } else {
-        let newItems = [...containers];
-        const [removeditem] = newItems[activeContainerIndex].items.splice(
-          activeitemIndex,
-          1
-        );
-        newItems[overContainerIndex].items.splice(
-          overitemIndex,
-          0,
-          removeditem
-        );
-        setContainers(newItems);
+      if (!activeContainer || !overContainer) {
+        setActiveId(null);
+        return;
       }
-    }
 
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      const activeContainer = findValueOfItems(active.id, 'item');
-      const overContainer = findValueOfItems(over.id, 'container');
-
-      if (!activeContainer || !overContainer) return;
       const activeContainerIndex = containers.findIndex(
         (container) => container.id === activeContainer.id
       );
       const overContainerIndex = containers.findIndex(
         (container) => container.id === overContainer.id
       );
-      const activeitemIndex = activeContainer.items.findIndex(
+      const activeItemIndex = activeContainer.items.findIndex(
         (item) => item.id === active.id
       );
 
       let newItems = [...containers];
-      const [removeditem] = newItems[activeContainerIndex].items.splice(
-        activeitemIndex,
-        1
-      );
-      newItems[overContainerIndex].items.push(removeditem);
+      const [movedItem] = newItems[activeContainerIndex].items.splice(activeItemIndex, 1);
+
+      if (over.id.toString().includes('item')) {
+        const overItemIndex = overContainer.items.findIndex((item) => item.id === over.id);
+        newItems[overContainerIndex].items.splice(overItemIndex, 0, movedItem);
+      } else {
+        newItems[overContainerIndex].items.push(movedItem);
+      }
+
       setContainers(newItems);
     }
+
     setActiveId(null);
   }
 
@@ -416,7 +377,7 @@ export default function Home() {
                   >
                     <SortableContext items={container.items.map((i) => i.id)}>
                       <div className="flex items-start flex-col gap-4">
-                        {container.items.map((i, index) => (
+                        {container.items.map((i) => (
                           <Items
                             title={i.title}
                             description={i.description}
@@ -424,7 +385,7 @@ export default function Home() {
                             id={i.id}
                             key={i.id}
                             onEdit={onEditItem}
-                            numero={index + 1}
+                            numero={i.numero}
                             date={i.date}
                           />
                         ))}
@@ -435,12 +396,19 @@ export default function Home() {
               </SortableContext>
               <DragOverlay adjustScale={false}>
                 {activeId && activeId.toString().includes('item') && (
-                  <Items id={activeId} title={findItemTitle(activeId)} description={findItemDescription(activeId)} priority={findItemPriority(activeId)} date={findItemDate(activeId)} numero={findItemNumero(activeId)} />
+                  <Items
+                    id={activeId}
+                    title={findItemTitle(activeId)}
+                    description={findItemDescription(activeId)}
+                    priority={findItemPriority(activeId)}
+                    date={findItemDate(activeId)}
+                    numero={findItemNumero(activeId)}
+                  />
                 )}
                 {activeId && activeId.toString().includes('container') && (
                   <Container id={activeId} title={findContainerTitle(activeId)}>
                     {findContainerItems(activeId).map((i, index) => (
-                      <Items key={i.id} title={i.title} description={i.description} id={i.id} priority={i.priority} date={i.date} numero={index + 1} />
+                      <Items key={i.id} title={i.title} description={i.description} id={i.id} priority={i.priority} date={i.date} numero={i.numero} />
                     ))}
                   </Container>
                 )}

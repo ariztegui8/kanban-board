@@ -39,9 +39,7 @@ const MenuSearch = () => {
             <Search />
         </div>
 
-        <div>
-            
-        </div>
+        
     </div>
   )
 }

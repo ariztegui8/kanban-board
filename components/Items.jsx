@@ -7,7 +7,7 @@ import { HiOutlineBolt } from "react-icons/hi2";
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowDownNarrowWide, ArrowUpNarrowWide, Pencil, Trash2 } from 'lucide-react';
-import avatar1 from '../assets/avatar1.png';
+import user from '../assets/user.svg';
 import { formatearFecha } from '@/helpers/formatearFecha';
 
 const Items = ({ id, title, description, onEdit, numero, priority, date }) => {
@@ -34,7 +34,7 @@ const Items = ({ id, title, description, onEdit, numero, priority, date }) => {
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`p-3 bg-white shadow-md w-full border border-[#6B959E] cursor-default ${isDragging && 'opacity-50'}`}
+      className={`p-3 bg-[#fafafa] shadow-md w-full border border-[#6B959E] cursor-default ${isDragging && 'opacity-50'}`}
     >
       <div className="">
         <div className='flex items-center justify-between gap-2 mb-3'>
@@ -83,9 +83,9 @@ const Items = ({ id, title, description, onEdit, numero, priority, date }) => {
           </div>
         </div>
 
-        <div {...listeners} className='flex gap-4 mb-4 cursor-move'>
+        <div {...listeners} className='flex gap-3 mb-5 cursor-move'>
           <div className='w-11 h-11 flex-shrink-0'>
-            <img className='w-full h-full rounded-xl' src={avatar1.src} alt="Tarea" />
+            <img className='w-full h-full rounded-xl' src={user.src} alt="Tarea" />
           </div>
           <div className=''>
             <p className='text-sm text-[#0F172A] font-medium mb-1' style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{title}</p>
@@ -95,14 +95,14 @@ const Items = ({ id, title, description, onEdit, numero, priority, date }) => {
 
         <div className='flex justify-between gap-2'>
           <div className='flex gap-2'>
-            <div className='flex '>
+            <div className='flex items-center'>
               <VscPinned size={18} color='#5EBDB2' className='cursor-pointer'/>
               <p className='text-xs text-[#0F172A]'>Fijar</p>
             </div>
 
             <Separator orientation="vertical" />
 
-            <div className='flex '>
+            <div className='flex items-center'>
               <HiOutlineBolt size={18} color='#5EBDB2' />
               <p className='text-xs text-[#0F172A]'>{priority}</p>
             </div>

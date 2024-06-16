@@ -37,11 +37,14 @@ const MenuNavegation = () => {
                         <NavigationMenuTrigger>Cronograma</NavigationMenuTrigger>
                         <NavigationMenuContent className="bg-white p-4 w-72 shadow-lg rounded-md">
                             <ul className='w-60'>
-                                <li className='mb-1 text-sm text-[#0F172A]'>
-                                    <NavigationMenuLink>Cronograma 1</NavigationMenuLink>
+                                <li className='mb-1 text-sm text-[#0F172A] cursor-pointer'>
+                                    <NavigationMenuLink>Publicaciones</NavigationMenuLink>
                                 </li>
-                                <li className='text-sm text-[#0F172A]'>
-                                    <NavigationMenuLink>Cronograma 2</NavigationMenuLink>
+                                <li className='mb-1 text-sm text-[#0F172A] cursor-pointer'>
+                                    <NavigationMenuLink>Progresos</NavigationMenuLink>
+                                </li>
+                                <li className='text-sm text-[#0F172A] cursor-pointer'>
+                                    <NavigationMenuLink>Calendario</NavigationMenuLink>
                                 </li>
                             </ul>
 
@@ -51,15 +54,15 @@ const MenuNavegation = () => {
                     <NavigationMenuItem>
                         <NavigationMenuTrigger>Listas</NavigationMenuTrigger>
                         <NavigationMenuContent className="bg-white p-4 shadow-lg rounded-md">
-                            <ul className='w-60'>
-                                <li className='mb-1 text-sm text-[#0F172A]'>
-                                    <NavigationMenuLink>Lista 1</NavigationMenuLink>
+                            <ul className='w-60 '>
+                                <li className='mb-1 text-sm text-[#0F172A] cursor-pointer'>
+                                    <NavigationMenuLink>Persona asignada</NavigationMenuLink>
                                 </li>
-                                <li className='mb-1 text-sm text-[#0F172A]'>
-                                    <NavigationMenuLink>Lista 2</NavigationMenuLink>
+                                <li className='mb-1 text-sm text-[#0F172A] cursor-pointer'>
+                                    <NavigationMenuLink>Prioridad</NavigationMenuLink>
                                 </li>
-                                <li className='text-sm text-[#0F172A]'>
-                                    <NavigationMenuLink>Lista 3</NavigationMenuLink>
+                                <li className='text-sm text-[#0F172A] cursor-pointer'>
+                                    <NavigationMenuLink>Recientes</NavigationMenuLink>
                                 </li>
                             </ul>
                         </NavigationMenuContent>

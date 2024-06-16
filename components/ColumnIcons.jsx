@@ -6,14 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import { LuUsers } from "react-icons/lu";
 import { RiLineChartLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
-import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    navigationMenuTriggerStyle
-} from "@/components/ui/navigation-menu"
-import Link from 'next/link'
+import { IoChevronDownOutline } from "react-icons/io5";
 
 
 const ColumnIcons = () => {
@@ -27,10 +20,10 @@ const ColumnIcons = () => {
 
     return (
         <div className={`p-2 flex flex-col shadow-right min-h-screen  transition-all duration-300 ${menuColumn ? 'w-44' : 'w-14'}`}>
-            <div className={`p-2 flex justify-end ${menuColumn ? 'mb-4' : 'mb-8'}`}>
+            <div className={`p-2 flex justify-end mb-8`}>
                 {menuColumn ?
                     <IoIosArrowBack
-                        size={20}
+                        size={22}
                         color='#808080'
                         className='cursor-pointer'
                         onClick={handleMenuColumn}
@@ -38,7 +31,7 @@ const ColumnIcons = () => {
                     :
 
                     <IoIosArrowForward
-                        size={20}
+                        size={22}
                         color='#808080'
                         className='cursor-pointer'
                         onClick={handleMenuColumn}
@@ -46,100 +39,97 @@ const ColumnIcons = () => {
                 }
             </div>
 
-            <div className='p-2'>
-                {menuColumn ?
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <Link href="#" passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Tableros
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                    :
+            <div className='p-2 flex justify-between gap-2 items-center'>
+                <div className='flex items-center gap-2 cursor-pointer'>
                     <BsColumnsGap
                         size={20}
                         color='#85C88A'
                         className='cursor-pointer'
                     />
-                }
+                    <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                        <p className='text-[#64748B] text-sm'>Tableros</p>
+                    </div>
+                </div>
+
+                <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                    <IoChevronDownOutline
+                        size={16}
+                        color='#808080'
+                        className='cursor-pointer'
+                    />
+                </div>
+
             </div>
 
-            <Separator className={`${menuColumn ? 'my-1' : 'my-4'}`} />
+            <Separator className={`my-4`} />
 
-            <div className='p-2'>
-                {menuColumn ?
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <Link href="#" passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Equipos
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                    :
+            <div className='p-2 flex justify-between gap-2 items-center'>
+                <div className='flex items-center gap-2 cursor-pointer'>
                     <LuUsers
                         size={20}
                         color='#85C88A'
                         className='cursor-pointer'
                     />
-                }
+                    <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                        <p className='text-[#64748B] text-sm'>Equipos</p>
+                    </div>
+                </div>
+
+                <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                    <IoChevronDownOutline
+                        size={16}
+                        color='#808080'
+                        className='cursor-pointer'
+                    />
+                </div>
+
             </div>
 
-            <Separator className={`${menuColumn ? 'my-1' : 'my-4'}`} />
+            <Separator className={`my-4`} />
 
-            <div className='p-2'>
-                {menuColumn ?
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <Link href="#" passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Informes
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                    :
+            <div className='p-2 flex justify-between gap-2 items-center'>
+                <div className='flex items-center gap-2 cursor-pointer'>
                     <RiLineChartLine
                         size={20}
                         color='#85C88A'
                         className='cursor-pointer'
                     />
-                }
+                    <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                        <p className='text-[#64748B] text-sm'>Informes</p>
+                    </div>
+                </div>
+
+                <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                    <IoChevronDownOutline
+                        size={16}
+                        color='#808080'
+                        className='cursor-pointer'
+                    />
+                </div>
             </div>
 
-            <Separator className={`${menuColumn ? 'my-1' : 'my-4'}`} />
+            <Separator className={`my-4`} />
 
-            <div className='p-2'>
-                {menuColumn ?
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <Link href="#" passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Configuración
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                    :
+            <div className='p-2 flex justify-between gap-2 items-center'>
+                <div className='flex items-center gap-2 cursor-pointer'>
                     <IoSettingsOutline
                         size={20}
                         color='#85C88A'
                         className='cursor-pointer'
                     />
-                }
-            </div>
+                    <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                        <p className='text-[#64748B] text-sm'>Configuración</p>
+                    </div>
+                </div>
 
+                <div className={`${menuColumn ? 'flex' : 'hidden'}`}>
+                    <IoChevronDownOutline
+                        size={16}
+                        color='#808080'
+                        className='cursor-pointer'
+                    />
+                </div>
+            </div>
         </div>
     )
 }
