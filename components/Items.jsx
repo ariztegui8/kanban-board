@@ -42,7 +42,7 @@ const Items = ({ id, title, description, onEdit, numero, priority, date }) => {
             <p className='text-[#6B959E] text-xs'># tarea {numero}</p>
           </div>
           <div {...listeners} className='flex-grow cursor-move'>
-            <p className='text-white'>Move</p>
+            <p className='text-[#fafafa]'>Move</p>
           </div>
           <div>
             <DropdownMenu>

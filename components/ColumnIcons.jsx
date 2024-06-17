@@ -9,14 +9,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { IoChevronDownOutline } from "react-icons/io5";
 
 
-const ColumnIcons = () => {
-
-    const [menuColumn, setMenuColumn] = useState(false)
-
-    const handleMenuColumn = () => {
-        setMenuColumn(!menuColumn)
-    }
-
+const ColumnIcons = ({menuColumn, handleMenuColumn}) => {
 
     return (
         <div className={`p-2 flex flex-col shadow-right min-h-screen  transition-all duration-300 ${menuColumn ? 'w-44' : 'w-14'}`}>

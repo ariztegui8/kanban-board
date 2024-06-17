@@ -41,6 +41,11 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingItemId, setEditingItemId] = useState(null);
+  const [menuColumn, setMenuColumn] = useState(false)
+
+  const handleMenuColumn = () => {
+      setMenuColumn(!menuColumn)
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -336,6 +341,8 @@ export default function Home() {
     setActiveId(null);
   }
 
+ 
+
   return (
     <div className="mx-auto ">
       <MenuSearch />
@@ -352,9 +359,14 @@ export default function Home() {
       />
 
       <div className="flex ">
-        <ColumnIcons />
-        <div className='p-4 w-full'>
-          <CreateBoard />
+        <ColumnIcons 
+            handleMenuColumn={handleMenuColumn}
+            menuColumn={menuColumn}
+        />
+        <div className={`w-full ${menuColumn ? 'p-2 sm:p-4' : 'p-4'}`}>
+          <CreateBoard 
+          
+          />
           <div className="flex flex-col gap-6 md:flex-row">
             <DndContext
               sensors={sensors}
